@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Malin Comics | New This Week</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Top Header -->
+  <header class="top-bar">
+    <div class="top-bar-left">
+      <button class="auth-btn" id="loginBtn">LOG IN</button>
+      <button class="auth-btn" id="logoutBtn" style="display:none;">LOG OUT</button>
+      <span class="admin-badge" id="adminBadge" style="display:none;">ADMIN</span>
+    </div>
+    <div class="logo">
+      <img src="malin-logo.png" alt="MALIN" class="malin-logo-img" />
+    </div>
+    <div class="top-bar-right">
+      <button class="unlimited-btn" id="unlimitedBtn">
+        <span class="u-icon">U</span> MALIN UNLIMITED SUBSCRIBE
+      </button>
+      <button class="search-btn" id="headerSearchBtn" aria-label="Search">🔍</button>
+    </div>
+  </header>
+
+  <!-- Main Navigation -->
+  <nav class="main-nav">
+    <ul>
+      <li><a href="#" class="nav-link">NEWS</a></li>
+      <li class="active"><a href="#" class="nav-link">COMICS</a></li>
+      <li><a href="#" class="nav-link">CHARACTERS</a></li>
+      <li><a href="#" class="nav-link">GAMES</a></li>
+      <li><a href="#" class="nav-link">MOVIES</a></li>
+      <li><a href="#" class="nav-link">TV SHOWS</a></li>
+      <li><a href="#" class="nav-link">VIDEOS</a></li>
+      <li><a href="#" class="nav-link">MORE</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="container">
+    <div class="section-header">
+      <h1>NEW THIS WEEK</h1>
+      <div class="header-actions">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search comics..." autocomplete="off" />
+          <button id="clearSearch" class="clear-search" title="Clear" style="display:none;">&times;</button>
+        </div>
+        <!-- Upload only visible to admin -->
+        <button id="uploadBtn" class="upload-btn" style="display:none;">+ UPLOAD YOUR COMIC PDF</button>
+      </div>
+    </div>
+
+    <input type="file" id="pdfInput" accept="application/pdf,.pdf" multiple hidden />
+
+    <div class="no-results" id="noResults" style="display:none;">
+      <p>No comics found matching your search.</p>
+    </div>
+
+    <div class="comics-grid" id="comicsGrid">
+      <!-- Real comics load from comics/list.txt -->
+    </div>
+    <!-- Loading (Uiverse-style rings) — shown until first comic appears -->
+    <div class="comics-loading" id="comicsLoading">
+      <svg class="pl" width="240" height="240" viewBox="0 0 240 240" aria-label="Loading">
+        <circle class="pl__ring pl__ring--a" cx="120" cy="120" r="105" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 660" stroke-dashoffset="-330" stroke-linecap="round"></circle>
+        <circle class="pl__ring pl__ring--b" cx="120" cy="120" r="35" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 220" stroke-dashoffset="-110" stroke-linecap="round"></circle>
+        <circle class="pl__ring pl__ring--c" cx="85" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+        <circle class="pl__ring pl__ring--d" cx="155" cy="120" r="70" fill="none" stroke="#000" stroke-width="20" stroke-dasharray="0 440" stroke-linecap="round"></circle>
+      </svg>
+      <p class="loading-text">Loading comics…</p>
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <p>No comics yet.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <p>Created by <strong>Bhim Mondal</strong></p>
+  </footer>
+
+  <!-- Login Modal -->
+  <div class="modal-overlay" id="loginModal">
+    <div class="modal login-modal">
+      <div class="modal-header">
+        <h2>Admin Login</h2>
+        <button class="close-btn" id="closeLoginModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="adminId">Admin ID</label>
+            <input type="text" id="adminId" placeholder="Enter Admin ID" autocomplete="username" required />
+          </div>
+          <div class="form-group">
+            <label for="adminPass">Password</label>
+            <input type="password" id="adminPass" placeholder="Enter Password" autocomplete="current-password" required />
+          </div>
+          <p class="login-error" id="loginError" style="display:none;">Invalid ID or Password</p>
+          <button type="submit" class="confirm-btn login-submit">LOG IN</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Upload Modal -->
+  <div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>Upload Comic PDF</h2>
+        <button class="close-btn" id="closeModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-content">
+            <div class="upload-icon">📄</div>
+            <p>Drag & drop your comic PDF here</p>
+            <p class="or">or</p>
+            <button class="browse-btn" id="browseBtn">Browse Files</button>
+            <p class="hint">Supports multiple PDFs • Max 50MB each</p>
+          </div>
+        </div>
+        <div class="preview-list" id="previewList"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="cancel-btn" id="cancelUpload">Cancel</button>
+        <button class="confirm-btn" id="confirmUpload" disabled>Add to Collection</button>
+      </div>
+    </div>
+  </div>
+
+  
+  <!-- PDF Viewer Modal (in-page, no download) -->
+  <div class="modal-overlay" id="pdfViewerModal">
+    <div class="modal pdf-viewer-modal">
+      <div class="modal-header pdf-viewer-header">
+        <h2 id="pdfViewerTitle">Comic</h2>
+        <div class="pdf-viewer-controls">
+          <button class="pdf-nav-btn" id="pdfPrev" title="Previous page">‹</button>
+          <span class="pdf-page-info" id="pdfPageInfo">1 / 1</span>
+          <button class="pdf-nav-btn" id="pdfNext" title="Next page">›</button>
+          <button class="close-btn" id="closePdfViewer">&times;</button>
+        </div>
+      </div>
+      <div class="modal-body pdf-viewer-body">
+        <div class="pdf-canvas-wrap" id="pdfCanvasWrap">
+          <canvas id="pdfCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

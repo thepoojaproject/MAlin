@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+  command = "echo Static site"
+
+[[headers]]
+  for = "/comics/*"
+  [headers.values]
+    Cache-Control = "public, max-age=60"
